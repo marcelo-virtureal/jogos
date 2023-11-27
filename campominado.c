@@ -15,8 +15,8 @@ Tabuleiro criaJogo(){
     int l, c;
     for (l = 0; l < TAM; l++){
         for (c = 0; c < TAM ; c++){
-            if (l == c)
-                t.mapa[1][1] = 'm';
+            if (l == 1 && c == l)
+                t.mapa[l][c] = 'm';
             else
                 t.mapa[l][c] = ' ';
 
