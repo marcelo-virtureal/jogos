@@ -31,13 +31,13 @@ Tabuleiro criaJogo(){ // Preenche a estrutura Tabuleiro.
 
     for (l = 0; l < TAM; l++){
         for (c = 0; c < TAM; c++){
-            if (t.mapa[l][c] != 'm') // fórmula inicial de localização da mina.
+            if (t.mapa[l][c] != 'm') // Verifica se uma mina está na posição.
                 t.mapa[l][c] = ' '; // preenche com espaço vazio se não huver mina
         }
     }
     for (l = 0; l < TAM; l++){
         for (c = 0; c < TAM; c++){
-            t.qtdMinas[l][c] = calcQtdMinas(t, l, c); // usa a função de cálculo de qrd de minas próximas para preencher a quantidade.
+            t.qtdMinas[l][c] = calcQtdMinas(t, l, c); // usa a função de cálculo de qtd de minas próximas para preencher a quantidade.
         }
     }
     return t;
