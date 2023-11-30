@@ -1,0 +1,1 @@
+Jogos são ótimos para treinar código e lógica. Jogos de tabuleiro são especialmente codificáveis e guardam uma lógica intrinseca em suas regras. A natureza 2d desses jogos permite uma visulização do seu andamento mesmo em interfaces bastante simplórias, como as presentes nas IDEs. # jogos
