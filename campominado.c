@@ -7,43 +7,44 @@
 typedef struct{
     char mapa[TAM][TAM];
     int qtdMinas[TAM][TAM];
+    int qtMinas;
 } Tabuleiro;
 
-int posicMinas(Tabuleiro t){
+Tabuleiro posicMinas(Tabuleiro t){
 
-    int qtMinas = 0;
+    int cL, cC;
+    t.qtMinas = 0;
 
-    while (qtdMinas <= TAM*TAM*0.1){
+    while (t.qtMinas <= TAM*TAM*0.1){
         srand(time(NULL));
         cL = rand() % TAM;
         cC = rand() % TAM;
-        t.mapa[cL][cC] = 'm'
-        qtMinas++;
+        t.mapa[cL][cC] = 'm';
+        t.qtMinas++;
     }
-    return qtMinas;
+    return t;
 }
 
-Tabuleiro criaJogo(){ // Preenche a estrutura Tabuleiro.
-
-    Tabuleiro t;
+Tabuleiro criaJogo(Tabuleiro t){ // Preenche a estrutura Tabuleiro.
 
     int l, c;
 
     for (l = 0; l < TAM; l++){
         for (c = 0; c < TAM; c++){
-            if (t.mapa[l][c] != 'm') // Verifica se uma mina está na posição.
-                t.mapa[l][c] = ' '; // preenche com espaço vazio se não huver mina
+            if (t.mapa[l][c] != 'm') // se não houver mina no espaço.
+                t.mapa[l][c] = ' '; // preenche com espaço vazio.
         }
     }
+
     for (l = 0; l < TAM; l++){
         for (c = 0; c < TAM; c++){
-            t.qtdMinas[l][c] = calcQtdMinas(t, l, c); // usa a função de cálculo de qtd de minas próximas para preencher a quantidade.
+            t.qtdMinas[l][c] = calcQtdMinas(t, l, c); // usa a função de cálculo de qrd de minas próximas para preencher a quantidade.
         }
     }
     return t;
 }
 
-void desenhaTabuleiro(Tabuleiro t){ // imprime na tela o tabuleiro de jogo.
+void desenhaTabuleiro(Tabuleiro t, int c1, int c2){ // imprime na tela o tabuleiro de jogo.
 
     int l, c;
 
@@ -70,12 +71,16 @@ void desenhaTabuleiro(Tabuleiro t){ // imprime na tela o tabuleiro de jogo.
                     if (c % 2 != 0)
                         printf("| ");
                     else
-                        printf(" %d ", t.qtdMinas[l / 2 - 1][c / 2 - 1]); // a quantidade de minas é buscada na matriz de acordo com o tamanho sem divisórias.
+                        printf("   ");
                 }
             }
         }
         printf("\n"); // quebra a linha.
     }
+    /*if (jogada(t, l / 2 - 1, c / 2 - 1) == 1)
+                            printf(" %c ", t.mapa[l / 2 - 1][c / 2 - 1]);
+                        else if (jogada(t, l / 2 - 1, c / 2 - 1) == 2)
+                            printf(" %d ", t.qtdMinas[l / 2 - 1][c / 2 - 1]);*/ // a quantidade de minas é buscada na matriz de acordo com o tamanho sem divisórias.
 }
 
 int calcQtdMinas(Tabuleiro t, int c1, int c2){
@@ -195,22 +200,29 @@ int calcQtdMinas(Tabuleiro t, int c1, int c2){
         return NULL;
 }
 
-void jogada(){
+int jogada(Tabuleiro t, int c1, int c2){
 
-    int coord1, coord2;
+    if (confereMina(t, c1, c2) == 1)
+        return 1;
+    else
+        return 2;
+    return 0;
 
-    do {
-        printf("Digite os dois números (linha e coluna) de coordenada separados por espaço onde deseja jogar.\n");
-        scanf("%d %d", &coord1, &coord2);
-        if (coord1 > TAM || coord2 > TAM)
-            printf("Coordenadas inválidas.\n");
-    } while (coord1 > TAM || coord2 > TAM);
 }
 
 int confereMina(Tabuleiro t, int cd1, int cd2){
 
-    if (t.mapa[cd1][cd2] == 'm'){
-        printf("Havia uma mina na posição %d , %d. Você explodiu.\n", cd1, cd2);
+    if (t.mapa[cd1-1][cd2-1] == 'm'){
+        printf("Havia uma mina na posicao %d , %d. Voce explodiu.\n", cd1, cd2);
+        return 1;
+    }
+    return 0;
+}
+
+int vitoria(Tabuleiro t, int qtJ){
+
+    if (qtJ >= TAM*TAM - t.qtMinas){
+        printf("Parabens, voce encontrou todas as minas.\n");
         return 1;
     }
     return 0;
@@ -218,9 +230,25 @@ int confereMina(Tabuleiro t, int cd1, int cd2){
 
 int main(void){
 
-    Tabuleiro tabuleiro;
+    Tabuleiro tabuleiro, pM;
+    int coord1, coord2, qtdJ = 0;
 
-    tabuleiro = criaJogo();
-    desenhaTabuleiro(tabuleiro);
+    pM = posicMinas(tabuleiro);
 
+    tabuleiro = criaJogo(pM);
+
+    do{
+        desenhaTabuleiro(tabuleiro, coord1, coord2);
+        printf("Este tabuleiro contem %d minas.\n", tabuleiro.qtMinas);
+        printf("Esta e a jogada %d.\n", qtdJ + 1);
+        printf("Faltam %d jogadas para vitoria.\n", TAM*TAM - tabuleiro.qtMinas - qtdJ - 1);
+        do {
+            printf("Digite os dois numeros (linha e coluna) de coordenada separados por espaço onde deseja jogar.\n");
+            scanf("%d %d", &coord1, &coord2);
+            if ((coord1 > TAM || coord1 < 1) && (coord2 > TAM || coord2 < 1))
+                printf("Coordenadas invalidas.\n");
+        } while ((coord1 > TAM || coord1 < 1) && (coord2 > TAM || coord2 < 1) );
+        qtdJ++;
+    } while (confereMina(tabuleiro, coord1, coord2) == 0 && vitoria(tabuleiro, qtdJ) == 0);
+    printf("Fim do jogo.");
 }
