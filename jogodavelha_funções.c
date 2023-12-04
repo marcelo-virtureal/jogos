@@ -4,6 +4,8 @@
 int matriz[3][3];
 char jogodavelha[3][3];
 
+/*A primeira função é responsável por imprimir tanto a matriz de referência atualizada (o número que indica a posição é substituido por 0 quando a posição é ocupada), como o tabuleiro sendo preenchido pelos jogadores.*/
+
 // Função que imprime o estágio atual do jogo.
 void atualizando(){
 
@@ -28,9 +30,13 @@ void atualizando(){
     }
 }
 
+/*A segunda função controla as jogadas. Como existe alternância, o jogador 1 sempre joga na rodada impar e o 2 joga na par. Este controle pode ser usado para indicar ao algoritmo que o jogador 1 escolheu para seu símbolo no jogo, ou X ou O.
+Também aqui atualiza-se as posições tanto da matriz de referência com 0, quanto do tabuleiro com X ou O.*/
+
 // A partir das coordenadas apresentadas, atualiza a matriz e o tabuleiro com as jogadas.
 int jogada(char j1, char j2, int c, int jogando){ // Recebe como variáveis, os dois jogadores, a posição, e a jogada.
 
+    /*Cada jogador escolhe uma posição, esta posição não pode ter sido escolhida anteriormente por outro jogador. Portanto, a primeira verificação é se a posição está livre. Caso contrário, é necessário indicar isso, e solicitar nova escolha. Caso a jogada seja regular, a função atualiza e retorna a rodada para a próxima jogada.*/
     switch (c){
         case 1:
             if (jogodavelha[0][0] == ' '){ // testa a posição livre.
@@ -183,6 +189,8 @@ int jogada(char j1, char j2, int c, int jogando){ // Recebe como variáveis, os 
     }
 }
 
+/*A última função define as condições de vitória. Este jogo possui 8 formas de ser ganho, que basicamente envolvem ocupar uma das dimensões da matriz com seu próprio símbolo. A função retorna inteiros de 1 a 9, sendo 9 o indicativb de que não foi atingido um critério de vitória.*/
+
 // Define as condições de vitória e retorna parâmetro de fim de jogo.
 int vitoria(int matriz[3][3], char jogodavelha[3][3], char j1, char j2, int joguei){
 
@@ -237,10 +245,14 @@ int vitoria(int matriz[3][3], char jogodavelha[3][3], char j1, char j2, int jogu
     return 9;
 }
 
+/*Por fim, a função principal detém os controles de repetição e uso das funções acima.*/
+
 int main(void){
 
     char jogador1, jogador2;
     int posicao, rodada = 1, valido, num = 1, l, c, escolheJogador, fim;
+
+    /*Primeiro define a matriz de referência que será usada na função que imprime o jogo atualizado.*/
 
     for (l = 0; l < 3; l++){ // cria a matriz de referência e o tabuleiro.
         for (c = 0; c < 3; c++){
@@ -249,6 +261,8 @@ int main(void){
             num++;
         }
     }
+
+    /*Esta repetição é usada para escolha do jogador 1 e 2. É usado uma variável inteira como referência para a escolha, embora o valor atribuido aos jogadores seja um char. O loop encerra caso a escolha seja correta.*/
 
     do {
         printf("Escolha o jogador (1 = X ou 2 = O)\n");
@@ -263,7 +277,9 @@ int main(void){
         } else
             printf("Escolha invalida.\n\n");
     } while (escolheJogador != 1 && escolheJogador != 2);
-
+    
+    /*Por fim, o jogo em si. Dois loops aninhados tem funções distintas, o primeiro faz a verificação do jogo, tais como a impressão da atualização e a verificação de vitória. O segundo loop controla apenas as jogadas. Isto ocorre porque não é permitido jogar fora do tabuleiro, tampouco em uma posição já ocupada, então o loop só termina se houver indicação de jogada licita.*/
+    
     // Este loop controla o fim do jogo.
     do{
         atualizando();
@@ -286,6 +302,8 @@ int main(void){
         if (valido != 0)
             rodada = valido;
     } while (fim == 9 && rodada <= 9);
+
+    /*O jogo termina com vitória, ou empate. Caso o limite de 9 rodadas seja alcançado, não houve vitória, o loop abaixo imprime o tabuleiro preenchido após o fim do jogo.*/
 
     for (l = 0; l < 3; l++){
         for (c = 0; c < 3; c++){
