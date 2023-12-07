@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define TAM 4
+#define TAM 5
 
 typedef struct{
     char mapa[TAM][TAM]; // Estrutura com um mapa para localização das minas;
@@ -11,33 +11,43 @@ typedef struct{
     int qtMinas; // Um inteiro que guarda a quantidade de minas calculada de acordo com o tamanho do tabuleiro.
 } Tabuleiro;
 
-Tabuleiro posicMinas(Tabuleiro t){ // Função responsável por posicionar as minas e calcular a quantidade.
+int posicMinasL(){ // Função responsável pela posição da mina na linha.
 
-    int cL, cC;
-    t.qtMinas = 0;
+    srand(time(NULL)); // usa funções randomicas para o posicionamento.
 
-    while (t.qtMinas <= TAM*TAM*0.1){ // a quantidade de minas é +- !0% do número de células da tabela.
-        srand(time(NULL)); // usa funções randomicas para o posicionamento.
-        cL = rand() % TAM;
-        cC = rand() % TAM;
-        if (t.mapa[cL][cC] = ' '){
-            t.mapa[cL][cC] = 'm';
-            t.qtMinas++;
-        }
-        printf("%d, %d, %c\n", cL, cC, t.mapa[cL][cC]);
-    }
-    return t;
+    return rand() % TAM;
+}
+
+int posicMinasC(){ // Função responsável pela posição da mina na coluna.
+
+    srand(time(NULL)); // usa funções randomicas para o posicionamento.
+
+    return rand() % TAM;
 }
 
 Tabuleiro criaJogo(Tabuleiro t){ // Preenche a estrutura Tabuleiro.
 
-    int l, c;
+    int l, c, c1, c2, minas = 1;
+
+    t.qtMinas = TAM * TAM * 0.1; // a quantidade de minas é +- 10% do número de células da tabela.
 
     for (l = 0; l < TAM; l++){
         for (c = 0; c < TAM; c++){
-            if (t.mapa[l][c] != 'm') // se não houver mina no espaço.
-                t.mapa[l][c] = ' '; // preenche com espaço vazio.
+            t.mapa[l][c] = ' '; // preenche com espaço vazio.
         }
+    }
+
+    while (minas <= t.qtMinas){
+        c1 = posicMinasL();
+        c2 = posicMinasC();
+        if (t.mapa[c1][c2] == 'm'){
+            while (t.mapa[c1][c2] == 'm'){
+                c1 = posicMinasL();
+                c2 = posicMinasC();
+            }
+        }
+        t.mapa[c1][c2] = 'm';
+        minas++;
     }
 
     for (l = 0; l < TAM; l++){
@@ -45,7 +55,6 @@ Tabuleiro criaJogo(Tabuleiro t){ // Preenche a estrutura Tabuleiro.
             t.qtdMinas[l][c] = calcQtdMinas(t, l, c); // usa a função de cálculo de qtd de minas próximas para preencher a quantidade.
         }
     }
-
 
     for (l = 0; l < TAM; l++){
         for (c = 0; c < TAM; c++){
@@ -282,18 +291,16 @@ int vitoria(Tabuleiro t, int qtJ){ // condição de vitória.
 
 int main(void){
 
-    Tabuleiro tabuleiro, pM;
+    Tabuleiro tabuleiro, preJogo;
     int coord1 = 0, coord2 = 0, qtdJ = 0;
 
-    pM = posicMinas(tabuleiro); // chama função de posicionamento das minas.
-
-    tabuleiro = criaJogo(pM); // preenche as matrizes da estrutura.
+    tabuleiro = criaJogo(preJogo); // preenche as matrizes da estrutura.
 
     do{ // começa jogo.
         desenhaTabuleiro(tabuleiro); // em cada rodada o tabuleiro atualizado é impresso.
         printf("Este tabuleiro contem %d minas.\n\n", tabuleiro.qtMinas);
         printf("Esta e a jogada %d.\n\n", qtdJ + 1);
-        printf("Faltam %d jogadas para vitoria.\n\n", TAM*TAM - tabuleiro.qtMinas - qtdJ);
+        printf("Faltam %d jogadas para vitoria.\n\n", TAM*TAM - tabuleiro.qtMinas - (qtdJ + 1));
         do {
             printf("Digite os dois numeros (linha e coluna) de coordenada separados por espaço onde deseja jogar.\n\n");
             scanf("%d %d", &coord1, &coord2);
